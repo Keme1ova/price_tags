@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Админка LED-ценников</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+        }
+
+        input {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #111827;
+            color: white;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+        }
+
+        .btn-link {
+            display: inline-block;
+            text-decoration: none;
+            color: #111827;
+            border: 1px solid #111827;
+            border-radius: 10px;
+            padding: 8px 16px;
+            margin-top: 10px;
+            background: white;
+            font-size: 14px;
+        }
+
+        .btn-link:hover {
+            background: #111827;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Островки</h1>
+
+<form method="POST">
+    <input name="island_name" placeholder="Название островка">
+    <button type="submit">Создать</button>
+</form>
+
+<hr>
+
+{% for island in islands %}
+<div class="card">
+    <h2>{{ island.name }}</h2>
+    <a class="btn-link" href="/island/{{ island.id }}">Открыть</a>
+</div>
+{% endfor %}
+
+</body>
+</html>

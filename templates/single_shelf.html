@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #222;
+        }
+
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-family: {{ side.font_family }}, Arial, sans-serif;
+        }
+
+        .led-screen {
+            background: {{ side.background_color }};
+            color: {{ side.product_color }};
+            overflow: hidden;
+            box-sizing: border-box;
+        }
+
+
+        .small {
+            width: 256px;
+            height: 32px;
+        }
+
+        .large {
+            width: 384px;
+            height: 32px;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+
+            box-sizing: border-box;
+            padding: 2px 4px;
+
+            display: grid;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .product {
+            min-width: 0;
+            height: 100%;
+
+            display: grid;
+            grid-template-rows: 12px 16px;
+
+            align-items: center;
+            justify-items: center;
+
+            overflow: hidden;
+        }
+
+        .name {
+            width: 100%;
+
+            color: {{ side.product_color }};
+            font-weight: 600;
+
+            font-size: 7px;
+            line-height: 1;
+
+            text-align: center;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .price {
+            width: 100%;
+
+            color: {{ side.price_color }};
+            font-weight: 800;
+
+            font-size: 11px;
+            line-height: 1;
+
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        /* немного крупнее для длинного ценника */
+
+        .large .name {
+            font-size: 9px;
+        }
+
+        .large .price {
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+{% set count = shelf.products|length %}
+
+<div class="led-screen {{ side.size }}">
+
+    <div 
+        class="container"
+        style="
+            {% if count > 0 %}
+            grid-template-columns: repeat({{ count }}, minmax(0, 1fr));
+            {% endif %}
+        "
+    >
+
+        {% for product in shelf.products %}
+        <div class="product">
+
+            <div class="name">
+                {{ product.name }}
+            </div>
+
+            <div class="price">
+                {{ product.price }}
+            </div>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<script>
+let lastUpdate = "{{ side.updated_at.isoformat() }}";
+const sideId = {{ side.id }};
+
+setInterval(async () => {
+    try {
+        const res = await fetch(`/api/side/${sideId}/updated`);
+        const data = await res.json();
+
+        if (data.updated_at !== lastUpdate) {
+            location.reload();
+        }
+    } catch (e) {
+        console.log("Ошибка обновления");
+    }
+}, 3000);
+</script>
+
+</body>
+</html>
