@@ -58,6 +58,22 @@
             border-radius: 8px;
             padding: 8px 10px;
             font-size: 13px;
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .url-code {
+            font-family: monospace;
+            color: #111827;
+            overflow-wrap: anywhere;
+        }
+
+        .url-item a {
+            color: #2563eb;
+            text-decoration: none;
+            white-space: nowrap;
         }
 
         .style-box {
@@ -113,11 +129,25 @@
             background: white;
         }
 
+        .shelf h3 {
+            margin-top: 0;
+        }
+
         .row {
             display: grid;
             grid-template-columns: 1fr 130px;
             gap: 10px;
             margin-bottom: 6px;
+        }
+
+        @media (max-width: 900px) {
+            .style-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .url-item {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -139,8 +169,15 @@
         <div class="url-list">
             {% for shelf in side.shelves %}
             <div class="url-item">
-                Полка {{ shelf.number }}:
-                <b>/display/{{ island.id }}/{{ side.number }}/shelf/{{ shelf.number }}</b>
+                <span>Полка {{ shelf.number }}:</span>
+
+                <span class="url-code">
+                    /display/{{ island.id }}/{{ side.number }}/shelf/{{ shelf.number }}
+                </span>
+
+                <a href="/display/{{ island.id }}/{{ side.number }}/shelf/{{ shelf.number }}" target="_blank">
+                    Открыть
+                </a>
             </div>
             {% endfor %}
         </div>
@@ -150,22 +187,76 @@
         <input type="hidden" name="island_id" value="{{ island.id }}">
         <input type="hidden" name="side_id" value="{{ side.id }}">
 
-        <b>Настройки визуала стороны</b>
+        <b>Настройки стороны</b>
 
         <div class="style-grid">
             <div class="field">
+                <label>Ширина, px</label>
+                <input 
+                    type="number" 
+                    name="width_px" 
+                    value="{{ side.width_px or 256 }}"
+                    min="1"
+                >
+            </div>
+
+            <div class="field">
+                <label>Высота, px</label>
+                <input 
+                    type="number" 
+                    name="height_px" 
+                    value="{{ side.height_px or 32 }}"
+                    min="1"
+                >
+            </div>
+
+            <div class="field">
+                <label>Количество полок</label>
+                <input 
+                    type="number" 
+                    name="shelf_count" 
+                    value="{{ side.shelf_count or side.shelves|length or 4 }}"
+                    min="1"
+                    max="8"
+                >
+            </div>
+
+            <div class="field">
+                <label>Шаблон</label>
+                <select name="template_name">
+                    <option value="custom" {% if side.template_name == "custom" %}selected{% endif %}>Свои цвета</option>
+                    <option value="standard" {% if side.template_name == "standard" %}selected{% endif %}>Стандарт</option>
+                    <option value="premium" {% if side.template_name == "premium" %}selected{% endif %}>Премиум</option>
+                    <option value="sale" {% if side.template_name == "sale" %}selected{% endif %}>Акция</option>
+                    <option value="dark" {% if side.template_name == "dark" %}selected{% endif %}>Тёмный</option>
+                </select>
+            </div>
+
+            <div class="field">
                 <label>Фон ценника</label>
-                <input type="color" name="background_color" value="{{ side.background_color }}">
+                <input 
+                    type="color" 
+                    name="background_color" 
+                    value="{{ side.background_color or '#000000' }}"
+                >
             </div>
 
             <div class="field">
                 <label>Цвет товара</label>
-                <input type="color" name="product_color" value="{{ side.product_color }}">
+                <input 
+                    type="color" 
+                    name="product_color" 
+                    value="{{ side.product_color or '#ffffff' }}"
+                >
             </div>
 
             <div class="field">
                 <label>Цвет цены</label>
-                <input type="color" name="price_color" value="{{ side.price_color }}">
+                <input 
+                    type="color" 
+                    name="price_color" 
+                    value="{{ side.price_color or '#ffde00' }}"
+                >
             </div>
 
             <div class="field">
@@ -178,9 +269,49 @@
                     <option value="Impact" {% if side.font_family == "Impact" %}selected{% endif %}>Impact</option>
                 </select>
             </div>
+
+            <div class="field">
+                <label>Позиция цены</label>
+                <select name="price_position">
+                    <option value="right" {% if side.price_position == "right" %}selected{% endif %}>Справа</option>
+                    <option value="bottom" {% if side.price_position == "bottom" %}selected{% endif %}>Снизу</option>
+                    <option value="top" {% if side.price_position == "top" %}selected{% endif %}>Сверху</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Выравнивание текста</label>
+                <select name="text_align">
+                    <option value="left" {% if side.text_align == "left" %}selected{% endif %}>Слева</option>
+                    <option value="center" {% if side.text_align == "center" %}selected{% endif %}>Центр</option>
+                    <option value="right" {% if side.text_align == "right" %}selected{% endif %}>Справа</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Размер названия</label>
+                <input 
+                    type="number" 
+                    name="product_font_size" 
+                    value="{{ side.product_font_size or 8 }}"
+                    min="1"
+                    max="50"
+                >
+            </div>
+
+            <div class="field">
+                <label>Размер цены</label>
+                <input 
+                    type="number" 
+                    name="price_font_size" 
+                    value="{{ side.price_font_size or 12 }}"
+                    min="1"
+                    max="60"
+                >
+            </div>
         </div>
 
-        <button type="submit">Сохранить визуал</button>
+        <button type="submit">Сохранить настройки</button>
     </form>
 
     {% for shelf in side.shelves %}
@@ -192,16 +323,16 @@
             <input type="hidden" name="island_id" value="{{ island.id }}">
             <input type="hidden" name="shelf_id" value="{{ shelf.id }}">
 
-            {% for i in range(10) %}
+            {% for i in range(15) %}
             <div class="row">
                 <input 
-                    name="product_name" 
+                    name="product_name_{{ i }}" 
                     placeholder="Товар {{ i + 1 }}"
                     value="{{ shelf.products[i].name if shelf.products|length > i else '' }}"
                 >
 
                 <input 
-                    name="product_price" 
+                    name="product_price_{{ i }}" 
                     placeholder="Цена"
                     value="{{ shelf.products[i].price if shelf.products|length > i else '' }}"
                 >
@@ -216,6 +347,53 @@
 
 </div>
 {% endfor %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const templateColors = {
+        standard: {
+            background_color: "#000000",
+            product_color: "#ffffff",
+            price_color: "#ffde00"
+        },
+        premium: {
+            background_color: "#111827",
+            product_color: "#ffffff",
+            price_color: "#fbbf24"
+        },
+        sale: {
+            background_color: "#7f1d1d",
+            product_color: "#ffffff",
+            price_color: "#fde047"
+        },
+        dark: {
+            background_color: "#020617",
+            product_color: "#e5e7eb",
+            price_color: "#38bdf8"
+        }
+    };
+
+    document.querySelectorAll('select[name="template_name"]').forEach(function (select) {
+        select.addEventListener("change", function () {
+            const form = select.closest("form");
+            const templateName = select.value;
+
+            if (!templateColors[templateName]) {
+                return;
+            }
+
+            form.querySelector('input[name="background_color"]').value =
+                templateColors[templateName].background_color;
+
+            form.querySelector('input[name="product_color"]').value =
+                templateColors[templateName].product_color;
+
+            form.querySelector('input[name="price_color"]').value =
+                templateColors[templateName].price_color;
+        });
+    });
+});
+</script>
 
 </body>
 </html>
