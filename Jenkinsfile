@@ -8,9 +8,9 @@ node('master') {
             checkout scm
         }
         stage ('Start service') {
-            sh "chown -R jenkins:jenkins /var/lib/jenkins/workspace/Front_Price_main/"
             sh "python3 -m venv myenv"
             sh "source myenv/bin/activate"
+            sh "chown -R jenkins:jenkins /var/lib/jenkins/workspace/Front_Price_main/"
             sh "pip install -r requirements.txt"
             sh "python3 app.py"
         }
