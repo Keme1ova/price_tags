@@ -9,6 +9,8 @@ node('master') {
         }
         stage ('Start service') {
             sh "chown -R jenkins:jenkins /var/lib/jenkins/workspace/Front_Price_main/"
+            sh "python3 -m venv myenv"
+            sh "source myenv/bin/activate"
             sh "pip install -r requirements.txt"
             sh "python3 app.py"
         }
