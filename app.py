@@ -12,7 +12,9 @@ app = Flask(__name__)
 # Берём подключение к базе из файла .env
 # В .env должна быть строка примерно такая:
 # DATABASE_URL=postgresql://USER:PASSWORD@localhost:5436/led_price_tags
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+#app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+# TODO на сервере DATABASE_URL не находит
+app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://postgres:cnfkrth@localhost:5432/led_price_tags"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db = SQLAlchemy(app)
