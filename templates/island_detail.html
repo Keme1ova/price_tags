@@ -34,7 +34,7 @@
             margin-bottom: 24px;
             padding: 18px;
             border-radius: 14px;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
         }
 
         .url {
@@ -76,6 +76,10 @@
             white-space: nowrap;
         }
 
+        .url-item a:hover {
+            text-decoration: underline;
+        }
+
         .style-box {
             margin-top: 14px;
             padding: 14px;
@@ -98,7 +102,8 @@
             color: #374151;
         }
 
-        input, select {
+        input,
+        select {
             box-sizing: border-box;
             width: 100%;
             padding: 8px;
@@ -119,6 +124,10 @@
             border-radius: 9px;
             margin-top: 10px;
             cursor: pointer;
+        }
+
+        button:hover {
+            background: #374151;
         }
 
         .shelf {
@@ -149,6 +158,20 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .style-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 
@@ -164,47 +187,70 @@
     <h2>{{ side.name }} — {{ side.size }}</h2>
 
     <div class="url">
-        <b>VNox URLs:</b>
+        <b>VNox URL для стороны:</b>
 
         <div class="url-list">
-            {% for shelf in side.shelves %}
             <div class="url-item">
-                <span>Полка {{ shelf.number }}:</span>
+                <span>Сторона {{ side.number }}:</span>
 
-                <span class="url-code">
-                    /display/{{ island.id }}/{{ side.number }}/shelf/{{ shelf.number }}
-                </span>
+                <a
+                    class="url-code"
+                    href="/display/{{ island.id }}/{{ side.number }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    /display/{{ island.id }}/{{ side.number }}
+                </a>
 
-                <a href="/display/{{ island.id }}/{{ side.number }}/shelf/{{ shelf.number }}" target="_blank">
-                    Открыть
+                <a
+                    href="/display/{{ island.id }}/{{ side.number }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    Открыть ↗
                 </a>
             </div>
-            {% endfor %}
         </div>
     </div>
 
-    <form class="style-box" method="POST" action="/save-side-style">
-        <input type="hidden" name="island_id" value="{{ island.id }}">
-        <input type="hidden" name="side_id" value="{{ side.id }}">
+    <form
+        class="style-box"
+        method="POST"
+        action="/save-side-style"
+    >
+        <input
+            type="hidden"
+            name="island_id"
+            value="{{ island.id }}"
+        >
+
+        <input
+            type="hidden"
+            name="side_id"
+            value="{{ side.id }}"
+        >
 
         <b>Настройки стороны</b>
 
         <div class="style-grid">
+
             <div class="field">
                 <label>Ширина, px</label>
-                <input 
-                    type="number" 
-                    name="width_px" 
+
+                <input
+                    type="number"
+                    name="width_px"
                     value="{{ side.width_px or 256 }}"
                     min="1"
                 >
             </div>
 
             <div class="field">
-                <label>Высота, px</label>
-                <input 
-                    type="number" 
-                    name="height_px" 
+                <label>Высота одной полки, px</label>
+
+                <input
+                    type="number"
+                    name="height_px"
                     value="{{ side.height_px or 32 }}"
                     min="1"
                 >
@@ -212,9 +258,10 @@
 
             <div class="field">
                 <label>Количество полок</label>
-                <input 
-                    type="number" 
-                    name="shelf_count" 
+
+                <input
+                    type="number"
+                    name="shelf_count"
                     value="{{ side.shelf_count or side.shelves|length or 4 }}"
                     min="1"
                     max="8"
@@ -223,76 +270,176 @@
 
             <div class="field">
                 <label>Шаблон</label>
+
                 <select name="template_name">
-                    <option value="custom" {% if side.template_name == "custom" %}selected{% endif %}>Свои цвета</option>
-                    <option value="standard" {% if side.template_name == "standard" %}selected{% endif %}>Стандарт</option>
-                    <option value="premium" {% if side.template_name == "premium" %}selected{% endif %}>Премиум</option>
-                    <option value="sale" {% if side.template_name == "sale" %}selected{% endif %}>Акция</option>
-                    <option value="dark" {% if side.template_name == "dark" %}selected{% endif %}>Тёмный</option>
+                    <option
+                        value="custom"
+                        {% if side.template_name == "custom" %}selected{% endif %}
+                    >
+                        Свои цвета
+                    </option>
+
+                    <option
+                        value="standard"
+                        {% if side.template_name == "standard" %}selected{% endif %}
+                    >
+                        Стандарт
+                    </option>
+
+                    <option
+                        value="premium"
+                        {% if side.template_name == "premium" %}selected{% endif %}
+                    >
+                        Премиум
+                    </option>
+
+                    <option
+                        value="sale"
+                        {% if side.template_name == "sale" %}selected{% endif %}
+                    >
+                        Акция
+                    </option>
+
+                    <option
+                        value="dark"
+                        {% if side.template_name == "dark" %}selected{% endif %}
+                    >
+                        Тёмный
+                    </option>
                 </select>
             </div>
 
             <div class="field">
                 <label>Фон ценника</label>
-                <input 
-                    type="color" 
-                    name="background_color" 
+
+                <input
+                    type="color"
+                    name="background_color"
                     value="{{ side.background_color or '#000000' }}"
                 >
             </div>
 
             <div class="field">
                 <label>Цвет товара</label>
-                <input 
-                    type="color" 
-                    name="product_color" 
+
+                <input
+                    type="color"
+                    name="product_color"
                     value="{{ side.product_color or '#ffffff' }}"
                 >
             </div>
 
             <div class="field">
                 <label>Цвет цены</label>
-                <input 
-                    type="color" 
-                    name="price_color" 
+
+                <input
+                    type="color"
+                    name="price_color"
                     value="{{ side.price_color or '#ffde00' }}"
                 >
             </div>
 
             <div class="field">
                 <label>Шрифт</label>
+
                 <select name="font_family">
-                    <option value="Arial" {% if side.font_family == "Arial" %}selected{% endif %}>Arial</option>
-                    <option value="Verdana" {% if side.font_family == "Verdana" %}selected{% endif %}>Verdana</option>
-                    <option value="Tahoma" {% if side.font_family == "Tahoma" %}selected{% endif %}>Tahoma</option>
-                    <option value="Georgia" {% if side.font_family == "Georgia" %}selected{% endif %}>Georgia</option>
-                    <option value="Impact" {% if side.font_family == "Impact" %}selected{% endif %}>Impact</option>
+                    <option
+                        value="Arial"
+                        {% if side.font_family == "Arial" %}selected{% endif %}
+                    >
+                        Arial
+                    </option>
+
+                    <option
+                        value="Verdana"
+                        {% if side.font_family == "Verdana" %}selected{% endif %}
+                    >
+                        Verdana
+                    </option>
+
+                    <option
+                        value="Tahoma"
+                        {% if side.font_family == "Tahoma" %}selected{% endif %}
+                    >
+                        Tahoma
+                    </option>
+
+                    <option
+                        value="Georgia"
+                        {% if side.font_family == "Georgia" %}selected{% endif %}
+                    >
+                        Georgia
+                    </option>
+
+                    <option
+                        value="Impact"
+                        {% if side.font_family == "Impact" %}selected{% endif %}
+                    >
+                        Impact
+                    </option>
                 </select>
             </div>
 
             <div class="field">
                 <label>Позиция цены</label>
+
                 <select name="price_position">
-                    <option value="right" {% if side.price_position == "right" %}selected{% endif %}>Справа</option>
-                    <option value="bottom" {% if side.price_position == "bottom" %}selected{% endif %}>Снизу</option>
-                    <option value="top" {% if side.price_position == "top" %}selected{% endif %}>Сверху</option>
+                    <option
+                        value="right"
+                        {% if side.price_position == "right" %}selected{% endif %}
+                    >
+                        Справа
+                    </option>
+
+                    <option
+                        value="bottom"
+                        {% if side.price_position == "bottom" %}selected{% endif %}
+                    >
+                        Снизу
+                    </option>
+
+                    <option
+                        value="top"
+                        {% if side.price_position == "top" %}selected{% endif %}
+                    >
+                        Сверху
+                    </option>
                 </select>
             </div>
 
             <div class="field">
                 <label>Выравнивание текста</label>
+
                 <select name="text_align">
-                    <option value="left" {% if side.text_align == "left" %}selected{% endif %}>Слева</option>
-                    <option value="center" {% if side.text_align == "center" %}selected{% endif %}>Центр</option>
-                    <option value="right" {% if side.text_align == "right" %}selected{% endif %}>Справа</option>
+                    <option
+                        value="left"
+                        {% if side.text_align == "left" %}selected{% endif %}
+                    >
+                        Слева
+                    </option>
+
+                    <option
+                        value="center"
+                        {% if side.text_align == "center" %}selected{% endif %}
+                    >
+                        Центр
+                    </option>
+
+                    <option
+                        value="right"
+                        {% if side.text_align == "right" %}selected{% endif %}
+                    >
+                        Справа
+                    </option>
                 </select>
             </div>
 
             <div class="field">
                 <label>Размер названия</label>
-                <input 
-                    type="number" 
-                    name="product_font_size" 
+
+                <input
+                    type="number"
+                    name="product_font_size"
                     value="{{ side.product_font_size or 8 }}"
                     min="1"
                     max="50"
@@ -301,17 +448,21 @@
 
             <div class="field">
                 <label>Размер цены</label>
-                <input 
-                    type="number" 
-                    name="price_font_size" 
+
+                <input
+                    type="number"
+                    name="price_font_size"
                     value="{{ side.price_font_size or 12 }}"
                     min="1"
                     max="60"
                 >
             </div>
+
         </div>
 
-        <button type="submit">Сохранить настройки</button>
+        <button type="submit">
+            Сохранить настройки
+        </button>
     </form>
 
     {% for shelf in side.shelves %}
@@ -319,27 +470,43 @@
 
         <h3>Полка {{ shelf.number }}</h3>
 
-        <form method="POST" action="/save-shelf">
-            <input type="hidden" name="island_id" value="{{ island.id }}">
-            <input type="hidden" name="shelf_id" value="{{ shelf.id }}">
+        <form
+            method="POST"
+            action="/save-shelf"
+        >
+            <input
+                type="hidden"
+                name="island_id"
+                value="{{ island.id }}"
+            >
+
+            <input
+                type="hidden"
+                name="shelf_id"
+                value="{{ shelf.id }}"
+            >
 
             {% for i in range(15) %}
             <div class="row">
-                <input 
-                    name="product_name_{{ i }}" 
+
+                <input
+                    name="product_name_{{ i }}"
                     placeholder="Товар {{ i + 1 }}"
                     value="{{ shelf.products[i].name if shelf.products|length > i else '' }}"
                 >
 
-                <input 
-                    name="product_price_{{ i }}" 
+                <input
+                    name="product_price_{{ i }}"
                     placeholder="Цена"
                     value="{{ shelf.products[i].price if shelf.products|length > i else '' }}"
                 >
+
             </div>
             {% endfor %}
 
-            <button type="submit">Сохранить полку</button>
+            <button type="submit">
+                Сохранить полку
+            </button>
         </form>
 
     </div>
@@ -356,16 +523,19 @@ document.addEventListener("DOMContentLoaded", function () {
             product_color: "#ffffff",
             price_color: "#ffde00"
         },
+
         premium: {
             background_color: "#111827",
             product_color: "#ffffff",
             price_color: "#fbbf24"
         },
+
         sale: {
             background_color: "#7f1d1d",
             product_color: "#ffffff",
             price_color: "#fde047"
         },
+
         dark: {
             background_color: "#020617",
             product_color: "#e5e7eb",
@@ -373,25 +543,31 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    document.querySelectorAll('select[name="template_name"]').forEach(function (select) {
-        select.addEventListener("change", function () {
-            const form = select.closest("form");
-            const templateName = select.value;
+    document
+        .querySelectorAll('select[name="template_name"]')
+        .forEach(function (select) {
 
-            if (!templateColors[templateName]) {
-                return;
-            }
+            select.addEventListener("change", function () {
+                const form = select.closest("form");
+                const templateName = select.value;
 
-            form.querySelector('input[name="background_color"]').value =
-                templateColors[templateName].background_color;
+                if (!templateColors[templateName]) {
+                    return;
+                }
 
-            form.querySelector('input[name="product_color"]').value =
-                templateColors[templateName].product_color;
+                form.querySelector(
+                    'input[name="background_color"]'
+                ).value = templateColors[templateName].background_color;
 
-            form.querySelector('input[name="price_color"]').value =
-                templateColors[templateName].price_color;
+                form.querySelector(
+                    'input[name="product_color"]'
+                ).value = templateColors[templateName].product_color;
+
+                form.querySelector(
+                    'input[name="price_color"]'
+                ).value = templateColors[templateName].price_color;
+            });
         });
-    });
 });
 </script>
 
